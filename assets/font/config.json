@@ -1,0 +1,1 @@
+{"importBase":"import","nativeBase":"native","name":"font","deps":[],"uuids":["4aAaqhtQBKTLQXhWVRH1nj","b1BiSK8XBBxaVXhc9kdu3i"],"paths":{"0":["zh_font",0],"1":["kai",0]},"scenes":{},"packs":{},"versions":{"import":[],"native":[]},"redirect":[],"debug":false,"extensionMap":{},"hasPreloadScript":true,"dependencyRelationships":{},"types":["cc.TTFFont"]}

@@ -1,0 +1,1 @@
+[1,0,0,[["cc.TextAsset",["_name","text"],1]],[[0,0,1,3]],[[0,"Game","\nsyntax = \"proto3\";\n\npackage Game;\n\nmessage C2S_Login\n{\n    string tianlu_token = 1;\n    string token_hash = 2;\n}\n\n"]],0,0,[],[],[]]
