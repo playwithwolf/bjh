@@ -68,7 +68,7 @@ window.login_telegramweb = function(){
 
     var loginJson = {
       "logintype": "TelegramWeb",
-      "t3token": initData,
+      "t3token": encodeURIComponent(initData),
       "t3userid": user.id,
     };
 
