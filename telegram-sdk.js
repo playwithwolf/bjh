@@ -64,11 +64,11 @@ window.login_telegramweb = function(){
   // 获取用户基本信息
   const user = initDataUnsafe.user;
   console.log("用户信息id：", user.id);
-  console.log("原始 initData：", initData);
+  console.log("原始 initData：", window.Telegram.WebApp.initData);
 
     var loginJson = {
       "logintype": "TelegramWeb",
-      "t3token": encodeURIComponent(initData),
+      "t3token": window.Telegram.WebApp.initData,
       "t3userid": user.id,
     };
 
