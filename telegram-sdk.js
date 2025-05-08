@@ -67,6 +67,7 @@ window.entergame = function(){
 
 window.login_telegramweb = function(){
 
+  window.playAD()
   console.log("login_telegramweb ");
  
   const initData = window.tg.initData || '';
