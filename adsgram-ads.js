@@ -148,7 +148,7 @@ window.Banner = (function() {
             //     this.status = AdStatus.ERROR;
             //     this.destroyAd();
             // }
-           C
+      
                 this.view.onError(()=>{
                     console.log('Banner ERROR');
                     this.status = AdStatus.ERROR;
@@ -246,7 +246,7 @@ window.InsertAd = (function() {
 
     InsertAd.prototype.createView = function(){
         this.codeId = this.getElement();
-        this.view = null
+        this.view = window.Adsgram.init({ blockId: this.codeId  });
         // wx.createInterstitialAd({
         //     adUnitId: this.codeId, // 必填，从微信公众平台获取
         // });
@@ -257,14 +257,14 @@ window.InsertAd = (function() {
         //         this.show();
         //     }
         // }
-        if(this.view)
-            this.view.onLoad( ()=>{
-                console.log("InsertAd LOADED")
-                this.status = AdStatus.LOADED;
-                if (this.isShowing) {
-                    this.show();
-                }
-            })
+        // if(this.view)
+        //     this.view.addEventListener('onLoad', ()=>{
+        //         console.log("InsertAd LOADED")
+        //         this.status = AdStatus.LOADED;
+        //         if (this.isShowing) {
+        //             this.show();
+        //         }
+        //     })
         // this.errorlistener = ()=>{
         //     console.log("InsertAd ERROR")
         //     this.status = AdStatus.ERROR;
@@ -272,7 +272,7 @@ window.InsertAd = (function() {
         //    // this.load();
         // }
         if(this.view)
-            this.view.onError( (err)=>{
+            this.view.addEventListener('onError', (err)=>{
                 console.log("InsertAd ERROR")
                 console.error('插屏广告加载失败', err);
             // this.status = AdStatus.ERROR;
@@ -280,26 +280,53 @@ window.InsertAd = (function() {
                 this.destroyAd();
                 this.createView();
             })
+        if(this.view)
+                this.view.addEventListener('onBannerNotFound', (err)=>{
+                    console.log("InsertAd ERROR")
+                    console.error('插屏广告加载失败', err);
+                // this.status = AdStatus.ERROR;
+                // this.isShowing = false;
+                    this.destroyAd();
+                    this.createView();
+                })
+
+       if(this.view)
+            this.view.addEventListener('onSkip',()=>{
+                //this.status = AdStatus.ERROR;
+                this.isShowing = false;
+                this.load();
+            })
+
+        if(this.view)
+               this.view.addEventListener('onComplete',()=>{
+                    //this.status = AdStatus.ERROR;
+                    this.isShowing = false;
+                    this.load();
+               })
+
         // this.offCloselistener = ()=>{
         //     this.status = AdStatus.ERROR;
         //     this.isShowing = false;
         //   //  this.load();
         // }
-        if(this.view)
-            this.view.onClose(()=>{
-                this.status = AdStatus.ERROR;
-                this.isShowing = false;
-            //  this.load();
-            })
+        // if(this.view)
+        //     this.view.addEventListener('onClose',()=>{
+        //         this.status = AdStatus.ERROR;
+        //         this.isShowing = false;
+        //     //  this.load();
+        //     })
         this.load();
     }
 
     InsertAd.prototype.load =  function() {
-        this.status = AdStatus.LOADING
+        //this.status = AdStatus.LOADING
        // this.codeId = this.getElement();
         if(this.view){
             console.log("InsertAd load codeId = "+this.codeId)
             this.view.load()
+            // if (this.isShowing) {
+            //       this.show();
+            // }
         }
         
 
@@ -308,39 +335,61 @@ window.InsertAd = (function() {
         // console.log(this.view)
         if(this.view){
       
-            this.view.offLoad();
-            this.view.offError();
-            this.view.offClose();
+            // this.view.removeEventListener('onLoad');
+             this.view.removeEventListener('onError');
+             this.view.removeEventListener('onBannerNotFound');
+             this.view.removeEventListener('onSkip');
+             this.view.removeEventListener('onComplete');
+            // this.view..removeEventListener('onClose');
             this.view.destroy()
             this.view = null;
         }
         this.isShowing = false;
-        this.status = AdStatus.ERROR;
+        //this.status = AdStatus.ERROR;
       
     }
     InsertAd.prototype.show =  function() {
         this.isShowing = true;
         console.log(" InsertAd this.status "+this.status)
-        if (this.status == AdStatus.LOADED) {
+        // if (this.status == AdStatus.LOADED) {
            
-            if(this.view){
-                console.log(" InsertAd this.show ")
-                this.view.show().then(() => {
-                    console.log('插屏广告显示成功');
-                }).catch((err) => {
-                    console.error('插屏广告显示失败', err.errCode);
-                    // 处理显示失败的情况，例如提示用户或重新加载广告
-                    this.status = AdStatus.ERROR;
-                    this.isShowing = false;
-                   // this.load();
-                    this.destroyAd();
-                    this.createView();
-                });
-            }
+        //     if(this.view){
+        //         console.log(" InsertAd this.show ")
+        //         this.view.show().then(() => {
+        //             console.log('插屏广告显示成功');
+        //         }).catch((err) => {
+        //             console.error('插屏广告显示失败', err.errCode);
+        //             // 处理显示失败的情况，例如提示用户或重新加载广告
+        //             this.status = AdStatus.ERROR;
+        //             this.isShowing = false;
+        //            // this.load();
+        //             this.destroyAd();
+        //             this.createView();
+        //         });
+        //     }
     
-        }   else {
-            this.load();
-        }
+        // }   else {
+           
+
+            this.view.show().then((result) => {
+                if (result.done) {
+                    // 用户观看完整广告或关闭广告
+                    console.log('广告已完成');
+                    this.isShowing = false
+                    this.load()
+                } else {
+                    // 用户跳过广告
+                    console.log('广告被跳过');
+                    this.isShowing = false
+                    this.load()
+                }
+            }).catch((error) => {
+                // 广告播放过程中发生错误
+                this.isShowing = false
+                this.destroyAd();
+                this.createView();
+            });
+        // }
     }
     InsertAd.prototype.hide = function() {
          this.destroyAd();
@@ -374,76 +423,114 @@ window.RewardAd = (function() {
 
     RewardAd.prototype.createView = function(){
         this.codeId = this.getElement();
-        this.view = null
+        this.view =  window.Adsgram.init({
+            blockId: this.codeId, 
+          });
         
         // wx.createRewardedVideoAd({
         //     adUnitId: this.codeId, // 必填，从微信公众平台获取
         // });
 
-        if(this.view)  
-            this.view.onLoad( ()=>{
-                this.status = AdStatus.LOADED;
-                console.log("RewardAd LOADED")
-                if (this.isShowing) {
-                    this.show();
-                }
-            })
+        // if(this.view)  
+        //     this.view.onLoad( ()=>{
+        //         this.status = AdStatus.LOADED;
+        //         console.log("RewardAd LOADED")
+        //         if (this.isShowing) {
+        //             this.show();
+        //         }
+        //     })
        
         if(this.view)    
-            this.view.onError((err)=>{
-                this.status = AdStatus.ERROR;
+            this.view.addEventListener('onError',(err)=>{
+                //this.status = AdStatus.ERROR;
                 console.error('激励广告加载失败', err);
+                this.success = false;
                 var adJson = {
                         "errcode":2,
                         "plat":"WEIXIN",
                         "msg":"广告展示失败",
                         "adtype":2,
                         "adcontrol":2,
-                        "rewardadsucess":"false"
+                        "rewardadsucess": "false"
                 }
                 var jsonString = JSON.stringify(adJson);
-
+                console.log(jsonString)
                 window.SDKInterface?.adCallback?.(jsonString)
-
+                this.isShowing = false;
                 this.destroyAd();
+                this.createView()
             // this.load();
             })
 
-            if(this.view)  
-                this.view.onClose((res)=>{
+            if(this.view)
+                this.view.addEventListener('onBannerNotFound', (err)=>{
+                    console.log("激励广告 ERROR")
+                    console.error('插屏广告加载失败', err);
+                // this.status = AdStatus.ERROR;
+                // this.isShowing = false;
+                    this.destroyAd();
+                    this.createView();
+                })
 
-                    if (res && res.isEnded) {
-                        // 用户完整观看了视频，可以下发奖励
-                    // console.log('用户完整观看了视频，可以下发奖励');
-                        // 这里可以调用下发奖励的逻辑
+            if(this.view)    
+                this.view.addEventListener('onReward',(err)=>{
+                    this.success = true;
+                })
 
-                        var adJson = {
-                                "errcode":1,
-                                "plat":"WEIXIN",
-                                "msg":"广告关闭",
-                                "adtype":2,
-                                "adcontrol":1,
-                                "rewardadsucess":"true"
-                        }
-                        var jsonString = JSON.stringify(adJson);
-                        window.SDKInterface.adCallback(jsonString)
-
-                    } else {
-                        // 用户未完整观看视频，不下发奖励
-                    // console.log('用户未完整观看视频，不下发奖励');
+           if(this.view)    
+                this.view.addEventListener('onSkip',(err)=>{
+                        this.success = false;
                         var adJson = {
                             "errcode":1,
                             "plat":"WEIXIN",
                             "msg":"广告关闭",
                             "adtype":2,
                             "adcontrol":1,
-                            "rewardadsucess":"false"
+                            "rewardadsucess": "false"
                         }
                         var jsonString = JSON.stringify(adJson);
+                        console.log(jsonString)
                         window.SDKInterface?.adCallback?.(jsonString)
-                    }
+                        this.isShowing = false;
+                        this.load();
+                })    
+
+            if(this.view)  
+                this.view.addEventListener('onComplete',()=>{
+
+                    // if (res && res.isEnded) {
+                        // 用户完整观看了视频，可以下发奖励
+                    // console.log('用户完整观看了视频，可以下发奖励');
+                        // 这里可以调用下发奖励的逻辑
+                        console.log("激励广告 onComplete")
+                        var adJson = {
+                                "errcode":1,
+                                "plat":"WEIXIN",
+                                "msg":"广告关闭",
+                                "adtype":2,
+                                "adcontrol":1,
+                                "rewardadsucess": this.success+""
+                        }
+                        var jsonString = JSON.stringify(adJson);
+                        console.log(jsonString)
+                        window.SDKInterface.adCallback(jsonString)
+
+                    // } else {
+                    //     // 用户未完整观看视频，不下发奖励
+                    // // console.log('用户未完整观看视频，不下发奖励');
+                    //     var adJson = {
+                    //         "errcode":1,
+                    //         "plat":"WEIXIN",
+                    //         "msg":"广告关闭",
+                    //         "adtype":2,
+                    //         "adcontrol":1,
+                    //         "rewardadsucess":"false"
+                    //     }
+                    //     var jsonString = JSON.stringify(adJson);
+                    //     window.SDKInterface?.adCallback?.(jsonString)
+                    // }
                     this.isShowing = false;
-                    this.status = AdStatus.ERROR;
+                    // this.status = AdStatus.ERROR;
                     this.load();
                 })
         this.load();
@@ -461,25 +548,30 @@ window.RewardAd = (function() {
     RewardAd.prototype.destroyAd  =  function() {
         if(this.view){
  
-            this.view.offLoad();
-            this.view.offError();
-            this.view.offClose();
+            // this.view.offLoad();
+            // this.view.offError();
+            // this.view.offClose();
+            this.view.removeEventListener('onError');
+            this.view.removeEventListener('onBannerNotFound');
+            this.view.removeEventListener('onReward');
+            this.view.removeEventListener('onSkip');
+            this.view.removeEventListener('onComplete');
             this.view.destroy()
             this.view = null;
         }
         this.isShowing = false;
-        this.status = AdStatus.ERROR;
-        this.createView()
+        // this.status = AdStatus.ERROR;
+        // this.createView()
     }
 
 
     RewardAd.prototype.show =  function() {
         this.isShowing = true;
-        console.log('激励广告显示this.status = '+this.status);
-        if (this.status == AdStatus.LOADED) {
-
+        // console.log('激励广告显示this.status = '+this.status);
+        // if (this.status == AdStatus.LOADED) {
+            this.success = false;
             if(this.view){
-                this.view.show().then(() => {
+                this.view.show().then((result) => {
                     console.log('激励广告显示成功');
 
                     var adJson = {
@@ -491,14 +583,21 @@ window.RewardAd = (function() {
                         "rewardadsucess":"false"
                     }
                     var jsonString = JSON.stringify(adJson);
-        
+                    console.log(jsonString)
                     window.SDKInterface?.adCallback?.(jsonString)
-
+                    if (result.done) {
+                        // 用户完整观看了广告，发放奖励
+                        this.success = true;
+                      } else {
+                        // 用户未完整观看广告，可选择不发放奖励
+                        console.log("广告未完整观看，未发放奖励。");
+                        this.success = false;
+                      }
 
                 }).catch(err => {
-                    console.error('激励广告显示成功', err);
+                    console.error('激励广告显示失败', err);
                     // 处理显示失败的情况，例如提示用户或重新加载广告
-                    this.status = AdStatus.ERROR;
+                    // this.status = AdStatus.ERROR;
                     this.isShowing = false;
                     var adJson = {
                         "errcode":2,
@@ -509,18 +608,20 @@ window.RewardAd = (function() {
                         "rewardadsucess":"false"
                     }
                     var jsonString = JSON.stringify(adJson);
+                    console.log(jsonString)
         
                     window.SDKInterface?.adCallback?.(jsonString)
                    // this.load();
                    this.destroyAd();
+                   this.createView();
                 });
             }
     
-        } else if (this.status == AdStatus.LOADING) {
+        // } else if (this.status == AdStatus.LOADING) {
 
-        } else {
-            this.load();
-        }
+        // } else {
+        //     this.load();
+        // }
     }
 
     RewardAd.prototype.hide = function() {

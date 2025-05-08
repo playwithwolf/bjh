@@ -29,22 +29,33 @@ window.getDevInfo = function(obj){
   var jso = "{\"tianluDevID\":\""+( user?.id || "" )+"\",\"country\":\"CN\",\"vendor\":\"telegramweb\",\"lan\":\""+( user?.language_code || "en" )+"\",\"bundleID\":\"telegramweb\",\"subChannelID\":\"telegramweb\",\"channelID\":\"telegramweb\",\"paytype\":\"0\"}";
 
    window.SDKInterface.deviceInfoCallback(jso);
+
+   window.initAds(
+    // ["adunit-1c966258ea138ed5","adunit-fc076741afb20dbd","adunit-45e96722b3aa095d","adunit-680cb52f516ac04c","adunit-149120b76025be9b"], //banner
+    // ["adunit-c82dd046a014dbaa"],                                                                                                         //插屏
+    // ["adunit-f425e6c177d03d96","adunit-68887b03ae472c04","adunit-dcfbe1a45ae262f8"]                                                      //激励视频         
+    null,
+    ["int-10574"],
+    
+    ["10573","10575","10576"], 
+   
+  )
  
 }
 
 window.entergame = function(){
   window.TLJSINITOK = true
   console.log("enterGame")
-  window.initWXAds(
-    // ["adunit-1c966258ea138ed5","adunit-fc076741afb20dbd","adunit-45e96722b3aa095d","adunit-680cb52f516ac04c","adunit-149120b76025be9b"], //banner
-    // ["adunit-c82dd046a014dbaa"],                                                                                                         //插屏
-    // ["adunit-f425e6c177d03d96","adunit-68887b03ae472c04","adunit-dcfbe1a45ae262f8"]                                                      //激励视频         
-    null,
-    null,
+  // window.initAds(
+  //   // ["adunit-1c966258ea138ed5","adunit-fc076741afb20dbd","adunit-45e96722b3aa095d","adunit-680cb52f516ac04c","adunit-149120b76025be9b"], //banner
+  //   // ["adunit-c82dd046a014dbaa"],                                                                                                         //插屏
+  //   // ["adunit-f425e6c177d03d96","adunit-68887b03ae472c04","adunit-dcfbe1a45ae262f8"]                                                      //激励视频         
+  //   null,
+  //   ["int-10574"],
     
-    ["adunit-c212442b321a4d09","adunit-4a5791c0ab03f922","adunit-814e740c7b3a69eb"], 
+  //   ["10573","10575","10576"], 
    
-  )
+  // )
   //window.createWXGameClub();
   // window.getUserGameClubData((json)=>{
   //   console.log(" ---------------- ")
@@ -196,10 +207,10 @@ window.statistics = function(jsonStr){
               var data = {
                 'appver' : window.appver
               };
-              window.TGESDK.loginsuccess(data,function (res) {
-                  console.log("loginsuccess");
-                  console.log(res);
-              });
+              // window.TGESDK.loginsuccess(data,function (res) {
+              //     console.log("loginsuccess");
+              //     console.log(res);
+              // });
 
               var data = {
                   'appver' : window.appver,
@@ -260,13 +271,21 @@ function getRandomElement(arr) {
  }
 
  //adCallback
-window.initWXAds = function(bannerIds,insertIds,rewardIds){
+window.initAds = function(bannerIds,insertIds,rewardIds){
 
   // window.banner = new window.Banner(["adunit-1c966258ea138ed5","adunit-fc076741afb20dbd","adunit-45e96722b3aa095d","adunit-680cb52f516ac04c","adunit-149120b76025be9b"])
 
   // window.insertAd = new window.InsertAd(["adunit-1c966258ea138ed5","adunit-c82dd046a014dbaa","adunit-c82dd046a014dbaa"]);
  
   // window.rewardAd = new window.RewardAd(["adunit-f425e6c177d03d96","adunit-68887b03ae472c04","adunit-dcfbe1a45ae262f8"]);
+
+  _platformId = '8500'
+  Adsgram.init({ blockId: _platformId });
+
+
+
+
+
   if(bannerIds!=null)
     window.banner = new window.Banner(bannerIds)
   if(insertIds!=null)
@@ -366,7 +385,7 @@ window.hideTransparentGameClubBtn = function(){
 
 window.deleteDirectoryRecursively = function(dirPath) {
    
-  }
+}
 
 
 
