@@ -246,7 +246,10 @@ window.InsertAd = (function() {
 
     InsertAd.prototype.createView = function(){
         this.codeId = this.getElement();
-        this.view = window.Adsgram.init({ blockId: this.codeId  });
+        this.view = window.Adsgram.init({ 
+            blockId: this.codeId ,
+            debug: true,         
+        });
         // wx.createInterstitialAd({
         //     adUnitId: this.codeId, // 必填，从微信公众平台获取
         // });
@@ -425,6 +428,7 @@ window.RewardAd = (function() {
         this.codeId = this.getElement();
         this.view =  window.Adsgram.init({
             blockId: this.codeId, 
+            debug: true,            
           });
         
         // wx.createRewardedVideoAd({
