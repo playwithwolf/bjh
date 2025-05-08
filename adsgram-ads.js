@@ -321,13 +321,13 @@ window.InsertAd = (function() {
     InsertAd.prototype.load =  function() {
         //this.status = AdStatus.LOADING
        // this.codeId = this.getElement();
-        if(this.view){
-            console.log("InsertAd load codeId = "+this.codeId)
-            this.view.load()
-            // if (this.isShowing) {
-            //       this.show();
-            // }
-        }
+        // if(this.view){
+        //     console.log("InsertAd load codeId = "+this.codeId)
+        //     this.view.load()
+        //     // if (this.isShowing) {
+        //     //       this.show();
+        //     // }
+        // }
         
 
     };
@@ -537,11 +537,11 @@ window.RewardAd = (function() {
     }
 
     RewardAd.prototype.load =  function() {
-        this.status = AdStatus.LOADING
-        //this.codeId = createSequentialElementExtractor(this.codeIds);
-        if(this.view){
-            this.view.load();
-        }
+        // this.status = AdStatus.LOADING
+        // //this.codeId = createSequentialElementExtractor(this.codeIds);
+        // if(this.view){
+        //     this.view.load();
+        // }
 
     };
 
